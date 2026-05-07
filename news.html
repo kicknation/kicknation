@@ -1,55 +1,13 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>KickNation News</title>
-  <link rel="stylesheet" href="style.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-
-<body>
-
-<section class="hero">
-  <h2>Live Football News 📰</h2>
-  <p>Real-time updates on matches, teams & tournaments</p>
-</section>
-
-<section class="features">
-
-  <div class="card">
-    <h3>⚽ Live Match</h3>
-    <p id="injury">Loading update...</p>
-  </div>
-
-  <div class="card">
-    <h3>🏆 Competition</h3>
-    <p id="ucl">Loading update...</p>
-  </div>
-
-  <div class="card">
-    <h3>📊 Status</h3>
-    <p id="worldcup">Loading update...</p>
-  </div>
-
-</section>
-
 <script>
-const API_KEY = "def27a3651524400ba3765f6c9cd7912";
-
 async function loadFootballData() {
   try {
-    const res = await fetch("https://api.football-data.org/v4/matches", {
-      headers: {
-        "X-Auth-Token": API_KEY
-      }
-    });
-
+    const res = await fetch("/.netlify/functions/football");
     const data = await res.json();
 
-    // If no matches returned
     if (!data.matches || data.matches.length === 0) {
-      document.getElementById("injury").innerText = "No live matches right now";
-      document.getElementById("ucl").innerText = "Check back later";
-      document.getElementById("worldcup").innerText = "Waiting for updates...";
+      document.getElementById("ucl").innerText = "No live matches";
+      document.getElementById("injury").innerText = "Check back later";
+      document.getElementById("worldcup").innerText = "Waiting for updates";
       return;
     }
 
@@ -64,24 +22,11 @@ async function loadFootballData() {
     document.getElementById("worldcup").innerText =
       match.status;
 
-  } catch (error) {
-    console.log(error);
-
-    document.getElementById("injury").innerText =
-      "Live data unavailable";
-
-    document.getElementById("ucl").innerText =
-      "API not responding";
-
-    document.getElementById("worldcup").innerText =
-      "Try again later";
+  } catch (err) {
+    document.getElementById("ucl").innerText = "Backend not working";
   }
 }
 
-// run once + refresh every 60 seconds
 loadFootballData();
 setInterval(loadFootballData, 60000);
 </script>
-
-</body>
-</html>
