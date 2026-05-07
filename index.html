@@ -26,7 +26,7 @@
   <p>
     🔴 BREAKING: Champions League night fixtures •
     Premier League title race heating up •
-    Transfer rumours ongoing •
+    Transfer updates ongoing •
     KickNation Live ⚽
   </p>
 </div>
@@ -56,7 +56,7 @@
 
 </section>
 
-<!-- FEATURE CARDS -->
+<!-- CARDS -->
 <section class="features">
 
   <div class="card">
@@ -111,17 +111,18 @@ function updateSite() {
   const matchText = document.getElementById("matchText");
   const leagueText = document.getElementById("leagueText");
 
-  if (matchScore) matchScore.innerText = match;
+  if (!matchScore || !competition || !kickoff) return;
+
+  matchScore.innerText = match;
+  competition.innerText = league;
+  kickoff.innerText = new Date().toLocaleString();
+
   if (matchText) matchText.innerText = match;
-
-  if (competition) competition.innerText = league;
   if (leagueText) leagueText.innerText = league;
-
-  if (kickoff) kickoff.innerText = new Date().toLocaleString();
 }
 
 updateSite();
-setInterval(updateSite, 6000);
+setInterval(updateSite, 5000);
 
 </script>
 
