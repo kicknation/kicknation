@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KickNation PRO - Global Football App</title>
+  <title>KickNation PRO - Football Hub</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -12,41 +12,40 @@
 
 <header class="topbar">
   <h1>KickNation PRO ⚽</h1>
-  <p>Live Global Football Intelligence</p>
+  <p>Global Football Intelligence</p>
 </header>
 
 <div class="ticker">
-  <p>🔴 LIVE DATA • REAL MATCHES • GLOBAL TEAMS • REAL-TIME UPDATES</p>
+  <p>🔴 LIVE MATCHES • GLOBAL TEAMS • REAL DATA</p>
 </div>
 
 <section class="hero">
-  <h2>🌍 Professional Football Dashboard</h2>
-  <p>Live matches, global teams, and real-time stats</p>
+  <h2>🌍 Football Dashboard</h2>
+  <p>Search any team in the world</p>
 </section>
 
 <!-- LIVE MATCH -->
 <section class="live-score">
 
-  <h2>🔴 Featured Live Match</h2>
+  <h2>🔴 Live Match</h2>
 
-  <div class="score" id="matchScore">Loading live data...</div>
-
-  <p id="competition">Loading league...</p>
-  <p id="kickoff">Loading time...</p>
-  <p id="status">Checking status...</p>
+  <div class="score" id="matchScore">Loading...</div>
+  <p id="competition">Loading...</p>
+  <p id="kickoff">Loading...</p>
+  <p id="status">Loading...</p>
 
 </section>
 
 <!-- SEARCH -->
 <section class="search-section">
 
-  <h2>🔍 Global Team Search</h2>
+  <h2>🔍 Search Teams</h2>
 
-  <input type="text" id="teamInput" placeholder="Search any football team worldwide...">
+  <input type="text" id="teamInput" placeholder="Enter team name...">
   <button onclick="searchTeam()">Search</button>
 
   <div class="search-result" id="searchResult">
-    Enter a team name to begin search
+    Search a team to continue
   </div>
 
 </section>
@@ -65,126 +64,83 @@
   </div>
 
   <div class="card">
-    <h3>⏱ Update</h3>
+    <h3>⏱ Time</h3>
     <p id="timeText">Loading...</p>
   </div>
 
 </section>
 
 <footer>
-  <p>© 2026 KickNation PRO • Powered by Live Football APIs ⚽</p>
+  <p>© 2026 KickNation PRO</p>
 </footer>
 
 <script>
 
 const API_URL = "https://kicknation.vercel.app/api/matches";
 
-/* =========================
-   LIVE MATCH ENGINE (PRO)
-========================= */
+/* LIVE MATCH */
 async function loadMatches() {
   try {
 
     const res = await fetch(API_URL);
-    if (!res.ok) throw new Error("API failed");
-
     const data = await res.json();
-    const matches = data?.matches || [];
 
-    if (!matches.length) {
-      document.getElementById("matchScore").innerText = "No matches available";
-      return;
-    }
+    const matches = data.matches || [];
 
-    /* PRIORITY: LIVE FIRST */
     const match =
       matches.find(m => m.status === "IN_PLAY") ||
-      matches.find(m => m.status === "TIMED") ||
       matches[0];
 
-    const home = match?.homeTeam?.name || "Home";
-    const away = match?.awayTeam?.name || "Away";
+    if (!match) return;
+
+    const home = match.homeTeam.name;
+    const away = match.awayTeam.name;
 
     document.getElementById("matchScore").innerText = `${home} vs ${away}`;
-
-    document.getElementById("competition").innerText =
-      match?.competition?.name || "Unknown League";
-
-    document.getElementById("kickoff").innerText =
-      match?.utcDate ? new Date(match.utcDate).toLocaleString() : "N/A";
-
-    const statusMap = {
-      IN_PLAY: "🔴 LIVE",
-      TIMED: "⏳ UPCOMING",
-      FINISHED: "✅ FULL TIME"
-    };
-
-    document.getElementById("status").innerText =
-      statusMap[match?.status] || match?.status || "UNKNOWN";
+    document.getElementById("competition").innerText = match.competition.name;
+    document.getElementById("kickoff").innerText = new Date(match.utcDate).toLocaleString();
+    document.getElementById("status").innerText = match.status;
 
     document.getElementById("matchText").innerText = `${home} vs ${away}`;
-    document.getElementById("leagueText").innerText =
-      match?.competition?.name || "Unknown";
+    document.getElementById("leagueText").innerText = match.competition.name;
+    document.getElementById("timeText").innerText = new Date().toLocaleTimeString();
 
-    document.getElementById("timeText").innerText =
-      new Date().toLocaleTimeString();
-
-  } catch (err) {
-    console.log(err);
-    document.getElementById("matchScore").innerText =
-      "Live data unavailable";
+  } catch (e) {
+    document.getElementById("matchScore").innerText = "Error loading data";
   }
 }
 
 loadMatches();
 setInterval(loadMatches, 60000);
 
-/* =========================
-   PRO SEARCH SYSTEM (WITH LINKS)
-========================= */
+/* SEARCH SYSTEM */
 function searchTeam() {
 
   const input = document.getElementById("teamInput").value.toLowerCase().trim();
   const result = document.getElementById("searchResult");
 
   if (!input) {
-    result.innerText = "Please enter a team name.";
+    result.innerText = "Enter a team name";
     return;
   }
 
   const teams = [
-    "arsenal",
-    "chelsea",
-    "manchester united",
-    "man united",
-    "liverpool",
-    "real madrid",
-    "barcelona",
-    "bayern munich",
-    "psg",
-    "paris",
-    "juventus",
-    "inter",
-    "milan"
+    "arsenal","chelsea","liverpool","real madrid",
+    "barcelona","psg","bayern munich","juventus"
   ];
 
-  const found = teams.find(team => input.includes(team));
+  const found = teams.find(t => input.includes(t));
 
   if (found) {
-
     const url = `team.html?team=${encodeURIComponent(found)}`;
 
     result.innerHTML = `
-      ✅ Team Found:<br><br>
-      🔗 <a href="${url}" target="_blank" 
-      style="color:#00ff88;font-weight:bold;text-decoration:underline;">
-        Open ${found.toUpperCase()} Stats Page
+      🔗 <a href="${url}" target="_blank" style="color:#00ff88;font-weight:bold;">
+        View ${found.toUpperCase()} Stats Page
       </a>
     `;
-
   } else {
-    result.innerHTML =
-      "🌍 Team not found.<br>Try bigger clubs like Arsenal, Madrid, PSG, Barcelona.";
+    result.innerHTML = "Team not found";
   }
 }
 
