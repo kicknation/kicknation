@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KickNation Pro - Global Football App</title>
+  <title>KickNation PRO - Global Football App</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -51,7 +51,7 @@
 
 </section>
 
-<!-- CARDS -->
+<!-- FEATURES -->
 <section class="features">
 
   <div class="card">
@@ -80,7 +80,7 @@
 const API_URL = "https://kicknation.vercel.app/api/matches";
 
 /* =========================
-   PRO LIVE MATCH ENGINE
+   LIVE MATCH ENGINE (PRO)
 ========================= */
 async function loadMatches() {
   try {
@@ -91,12 +91,12 @@ async function loadMatches() {
     const data = await res.json();
     const matches = data?.matches || [];
 
-    if (matches.length === 0) {
+    if (!matches.length) {
       document.getElementById("matchScore").innerText = "No matches available";
       return;
     }
 
-    /* PRIORITY SYSTEM (PRO LOGIC) */
+    /* PRIORITY: LIVE FIRST */
     const match =
       matches.find(m => m.status === "IN_PLAY") ||
       matches.find(m => m.status === "TIMED") ||
@@ -113,9 +113,6 @@ async function loadMatches() {
     document.getElementById("kickoff").innerText =
       match?.utcDate ? new Date(match.utcDate).toLocaleString() : "N/A";
 
-    /* PRO STATUS SYSTEM */
-    let status = match?.status || "UNKNOWN";
-
     const statusMap = {
       IN_PLAY: "🔴 LIVE",
       TIMED: "⏳ UPCOMING",
@@ -123,7 +120,7 @@ async function loadMatches() {
     };
 
     document.getElementById("status").innerText =
-      statusMap[status] || status;
+      statusMap[match?.status] || match?.status || "UNKNOWN";
 
     document.getElementById("matchText").innerText = `${home} vs ${away}`;
     document.getElementById("leagueText").innerText =
@@ -133,7 +130,7 @@ async function loadMatches() {
       new Date().toLocaleTimeString();
 
   } catch (err) {
-    console.log("API ERROR:", err);
+    console.log(err);
     document.getElementById("matchScore").innerText =
       "Live data unavailable";
   }
@@ -143,7 +140,7 @@ loadMatches();
 setInterval(loadMatches, 60000);
 
 /* =========================
-   PRO GLOBAL SEARCH ENGINE
+   PRO SEARCH SYSTEM (WITH LINKS)
 ========================= */
 function searchTeam() {
 
@@ -155,42 +152,39 @@ function searchTeam() {
     return;
   }
 
-  /* EXPANDABLE GLOBAL SEARCH MAP */
-  const teamMap = {
-    "arsenal": "Premier League",
-    "chelsea": "Premier League",
-    "manchester united": "Premier League",
-    "man united": "Premier League",
-    "liverpool": "Premier League",
-    "real madrid": "La Liga",
-    "barcelona": "La Liga",
-    "bayern": "Bundesliga",
-    "bayern munich": "Bundesliga",
-    "psg": "Ligue 1",
-    "paris": "Ligue 1",
-    "juventus": "Serie A",
-    "inter": "Serie A",
-    "milan": "Serie A"
-  };
+  const teams = [
+    "arsenal",
+    "chelsea",
+    "manchester united",
+    "man united",
+    "liverpool",
+    "real madrid",
+    "barcelona",
+    "bayern munich",
+    "psg",
+    "paris",
+    "juventus",
+    "inter",
+    "milan"
+  ];
 
-  let foundLeague = null;
+  const found = teams.find(team => input.includes(team));
 
-  for (let team in teamMap) {
-    if (input.includes(team)) {
-      foundLeague = teamMap[team];
-      break;
-    }
-  }
+  if (found) {
 
-  if (foundLeague) {
+    const url = `team.html?team=${encodeURIComponent(found)}`;
+
     result.innerHTML = `
-      ✅ Team Found<br>
-      🏆 League: ${foundLeague}<br>
-      ⚽ Data: Available (API integration ready)
+      ✅ Team Found:<br><br>
+      🔗 <a href="${url}" target="_blank" 
+      style="color:#00ff88;font-weight:bold;text-decoration:underline;">
+        Open ${found.toUpperCase()} Stats Page
+      </a>
     `;
+
   } else {
     result.innerHTML =
-      "🌍 Team not found in local database.<br>Upgrade coming: full global club database.";
+      "🌍 Team not found.<br>Try bigger clubs like Arsenal, Madrid, PSG, Barcelona.";
   }
 }
 
