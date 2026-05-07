@@ -1,3 +1,12 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>KickNation News</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
 <section class="hero">
   <h2>Live Football News 📰</h2>
   <p>Real-time updates on injuries, matches & tournaments</p>
@@ -21,3 +30,40 @@
   </div>
 
 </section>
+
+<script>
+const injuryUpdates = [
+  "Erling Haaland expected to return next match",
+  "Mbappé suffers minor knock but available",
+  "Vinícius Jr cleared for Champions League game"
+];
+
+const uclUpdates = [
+  "Real Madrid advance to semifinals",
+  "Man City dominate group stage",
+  "Bayern Munich qualify comfortably"
+];
+
+const worldCupUpdates = [
+  "Brazil lead South American standings",
+  "England secure early qualification spot",
+  "Qualifiers heating up in Europe"
+];
+
+function updateNews() {
+  document.getElementById("injury").innerText =
+    injuryUpdates[Math.floor(Math.random() * injuryUpdates.length)];
+
+  document.getElementById("ucl").innerText =
+    uclUpdates[Math.floor(Math.random() * uclUpdates.length)];
+
+  document.getElementById("worldcup").innerText =
+    worldCupUpdates[Math.floor(Math.random() * worldCupUpdates.length)];
+}
+
+updateNews();
+setInterval(updateNews, 5000);
+</script>
+
+</body>
+</html>
