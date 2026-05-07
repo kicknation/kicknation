@@ -4,138 +4,99 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KickNation - Live Football Hub</title>
+  <title>KickNation - Global Football</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- NAVBAR -->
 <nav>
-  <h1>KickNation</h1>
-
-  <ul>
-    <li><a href="index.html">Home</a></li>
-    <li><a href="news.html">News</a></li>
-    <li><a href="contact.html">Contact</a></li>
-  </ul>
+  <h1>KickNation 🌍</h1>
 </nav>
 
-<!-- TICKER -->
 <div class="ticker">
-  <p>
-    🔴 LIVE: Champions League action • Premier League race heating up • Transfer news ongoing • KickNation ⚽
-  </p>
+  <p>🌍 Live global football data • All leagues • All competitions • KickNation</p>
 </div>
 
-<!-- HERO -->
 <section class="hero">
-  <h2>KickNation Live Football Hub ⚽</h2>
-  <p>Scores, updates & football coverage in one place</p>
+  <h2>Global Football Dashboard ⚽</h2>
+  <p>Live matches from around the world</p>
 </section>
 
-<!-- LIVE SCORE DASHBOARD -->
-<section class="live-dashboard">
-
-  <h2>🔴 Live Match</h2>
-
-  <div class="live-card">
-
-    <div class="team">
-      <span id="team1">Arsenal</span>
-      <strong id="score1">2</strong>
-    </div>
-
-    <div class="status" id="status">
-      LIVE 78'
-    </div>
-
-    <div class="team">
-      <span id="team2">Chelsea</span>
-      <strong id="score2">1</strong>
-    </div>
-
-  </div>
-
-  <p class="competition" id="league">
-    Premier League
-  </p>
-
-</section>
-
-<!-- FEATURE CARDS -->
+<!-- FILTER SECTION -->
 <section class="features">
 
   <div class="card">
-    <h3>⚽ Match</h3>
-    <p id="matchText">Loading...</p>
-  </div>
-
-  <div class="card">
-    <h3>🏆 League</h3>
-    <p id="leagueText">Loading...</p>
-  </div>
-
-  <div class="card">
-    <h3>📅 Update</h3>
-    <p id="timeText">Loading...</p>
+    <h3>🌍 Competition</h3>
+    <select id="competitionSelect" onchange="loadMatches()">
+      <option value="PL">Premier League</option>
+      <option value="CL">Champions League</option>
+      <option value="PD">La Liga</option>
+      <option value="SA">Serie A</option>
+      <option value="BL1">Bundesliga</option>
+    </select>
   </div>
 
 </section>
 
-<!-- FOOTER -->
-<footer>
-  <p>© 2026 KickNation • Football Never Stops ⚽</p>
-</footer>
+<!-- LIVE MATCH DISPLAY -->
+<section class="live-score">
 
-<!-- SCRIPT -->
+  <h2>🔴 Live / Fixtures</h2>
+
+  <div class="score" id="matchDisplay">
+    Loading matches...
+  </div>
+
+  <p id="competitionName"></p>
+
+</section>
+
 <script>
 
-const matches = [
-  { t1: "Arsenal", t2: "Chelsea" },
-  { t1: "Real Madrid", t2: "Barcelona" },
-  { t1: "Liverpool", t2: "Man City" },
-  { t1: "Bayern", t2: "Dortmund" },
-  { t1: "PSG", t2: "Marseille" }
-];
+const API_KEY = "YOUR_API_KEY_HERE";
 
-const leagues = [
-  "Premier League",
-  "Champions League",
-  "La Liga",
-  "Bundesliga",
-  "Serie A"
-];
+async function loadMatches() {
 
-const statuses = ["LIVE 12'", "LIVE 34'", "HT", "LIVE 67'", "LIVE 81'", "FT"];
+  const comp = document.getElementById("competitionSelect").value;
 
-function updateSite() {
+  try {
 
-  const match = matches[Math.floor(Math.random() * matches.length)];
-  const league = leagues[Math.floor(Math.random() * leagues.length)];
-  const status = statuses[Math.floor(Math.random() * statuses.length)];
+    const res = await fetch(
+      `https://api.football-data.org/v4/competitions/${comp}/matches`,
+      {
+        headers: {
+          "X-Auth-Token": API_KEY
+        }
+      }
+    );
 
-  const score1 = Math.floor(Math.random() * 4);
-  const score2 = Math.floor(Math.random() * 4);
+    const data = await res.json();
 
-  // LIVE DASHBOARD
-  document.getElementById("team1").innerText = match.t1;
-  document.getElementById("team2").innerText = match.t2;
-  document.getElementById("score1").innerText = score1;
-  document.getElementById("score2").innerText = score2;
-  document.getElementById("status").innerText = status;
-  document.getElementById("league").innerText = league;
+    if (!data.matches || data.matches.length === 0) {
+      document.getElementById("matchDisplay").innerText =
+        "No matches found";
+      return;
+    }
 
-  // CARDS
-  const matchText = match.t1 + " vs " + match.t2;
+    const match = data.matches[0];
 
-  document.getElementById("matchText").innerText = matchText;
-  document.getElementById("leagueText").innerText = league;
-  document.getElementById("timeText").innerText = new Date().toLocaleString();
+    document.getElementById("matchDisplay").innerText =
+      match.homeTeam.name + " vs " + match.awayTeam.name;
+
+    document.getElementById("competitionName").innerText =
+      match.competition.name + " • " + match.status;
+
+  } catch (err) {
+
+    document.getElementById("matchDisplay").innerText =
+      "API Error - Check Key or Limit";
+
+    console.log(err);
+  }
 }
 
-updateSite();
-setInterval(updateSite, 5000);
+loadMatches();
 
 </script>
 
