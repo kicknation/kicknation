@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Team Stats - KickNation PRO</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      background: #0f0f0f;
+      color: white;
+      margin: 0;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .card {
+      background: #1c1c1c;
+      padding: 20px;
+      margin: 15px auto;
+      border-radius: 12px;
+      max-width: 600px;
+      box-shadow: 0 0 10px rgba(0,255,136,0.2);
+    }
+
+    h1 {
+      color: #00ff88;
+    }
+
+    .badge {
+      color: #00ff88;
+      font-weight: bold;
+    }
+
+    .loading {
+      color: gray;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1 id="teamName">Loading Team...</h1>
+<p class="badge" id="league">Loading league...</p>
+
+<div class="card">
+  <h3>📊 Team Overview</h3>
+  <p id="overview">Loading data...</p>
+</div>
+
+<div class="card">
+  <h3>⚽ Recent Matches</h3>
+  <p id="matches">Loading matches...</p>
+</div>
+
+<div class="card">
+  <h3>🏆 Status</h3>
+  <p id="status">Fetching live data...</p>
+</div>
+
+<script>
+
+/* =========================
+   GET TEAM FROM URL
+========================= */
+const params = new URLSearchParams(window.location.search);
+const team = params.get("team");
+
+/* =========================
+   API (reuse your backend)
+========================= */
+const API_URL = "https://kicknation.vercel.app/api/matches";
+
+async function loadTeamData() {
+
+  if (!team) {
+    document.getElementById("teamName").innerText = "No team selected";
+    return;
+  }
+
+  try {
+
+    const res = await fetch(API_URL);
+    const data = await res.json();
+
+    const matches = data?.matches || [];
+
+    /* filter matches for this team */
+    const teamMatches = matches.filter(m =>
+      m.homeTeam?.name?.toLowerCase().includes(team) ||
+      m.awayTeam?.name?.toLowerCase().includes(team)
+    );
+
+    const latestMatch = teamMatches[0];
+
+    /* =========================
+       TEAM NAME
+    ========================= */
+    document.getElementById("teamName").innerText =
+      team.toUpperCase();
+
+    /* =========================
+       LEAGUE INFO
+    ========================= */
+    document.getElementById("league").innerText =
+      latestMatch?.competition?.name || "League data unavailable";
+
+    /* =========================
+       OVERVIEW
+    ========================= */
+    document.getElementById("overview").innerText =
+      teamMatches.length > 0
+        ? `Found ${teamMatches.length} recent matches involving ${team}`
+        : "No recent match data found";
+
+    /* =========================
+       MATCHES DISPLAY
+    ========================= */
+    document.getElementById("matches").innerText =
+      teamMatches.length > 0
+        ? teamMatches.slice(0, 3).map(m =>
+            `${m.homeTeam.name} vs ${m.awayTeam.name} (${m.status})`
+          ).join(" | ")
+        : "No matches available";
+
+    /* =========================
+       STATUS LOGIC
+    ========================= */
+    let status = latestMatch?.status || "UNKNOWN";
+
+    const statusMap = {
+      IN_PLAY: "🔴 LIVE",
+      TIMED: "⏳ UPCOMING",
+      FINISHED: "✅ FULL TIME"
+    };
+
+    document.getElementById("status").innerText =
+      statusMap[status] || status;
+
+  } catch (err) {
+    console.log(err);
+    document.getElementById("overview").innerText =
+      "Failed to load team data";
+  }
+}
+
+loadTeamData();
+
+</script>
+
+</body>
+</html>
