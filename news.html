@@ -1,57 +1,18 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>KickNation News</title>
-  <link rel="stylesheet" href="style.css">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-
-<body>
-
-<section class="hero">
-  <h2>Live Football News 📰</h2>
-  <p>Real-time updates on matches, teams & tournaments</p>
-</section>
-
-<section class="features">
-
-  <div class="card">
-    <h3>⚽ Live Match</h3>
-    <p id="injury">Loading update...</p>
-  </div>
-
-  <div class="card">
-    <h3>🏆 Competition</h3>
-    <p id="ucl">Loading update...</p>
-  </div>
-
-  <div class="card">
-    <h3>📊 Status</h3>
-    <p id="worldcup">Loading update...</p>
-  </div>
-
-</section>
-
 <script>
 async function loadFootballData() {
   try {
     const res = await fetch("/.netlify/functions/football");
-
-    // If backend not ready
-    if (!res.ok) {
-      document.getElementById("injury").innerText = "Server not ready";
-      document.getElementById("ucl").innerText = "Check deployment";
-      document.getElementById("worldcup").innerText = "Try again later";
-      return;
-    }
-
     const data = await res.json();
 
-    // If no matches
     if (!data.matches || data.matches.length === 0) {
-      document.getElementById("injury").innerText = "No live matches right now";
-      document.getElementById("ucl").innerText = "Waiting for fixtures";
-      document.getElementById("worldcup").innerText = "Updates coming soon";
+      document.getElementById("injury").innerText =
+        "No upcoming matches";
+
+      document.getElementById("ucl").innerText =
+        "Check back later";
+
+      document.getElementById("worldcup").innerText =
+        "Waiting for updates";
       return;
     }
 
@@ -64,20 +25,21 @@ async function loadFootballData() {
       match.competition.name;
 
     document.getElementById("worldcup").innerText =
-      match.status;
+      "Kickoff: " + new Date(match.utcDate).toLocaleString();
 
-  } catch (error) {
-    console.log(error);
+  } catch (err) {
 
-    document.getElementById("injury").innerText = "Error loading data";
-    document.getElementById("ucl").innerText = "Backend issue";
-    document.getElementById("worldcup").innerText = "Try again later";
+    document.getElementById("injury").innerText =
+      "Error loading football data";
+
+    document.getElementById("ucl").innerText =
+      "Backend unavailable";
+
+    document.getElementById("worldcup").innerText =
+      "Try again later";
   }
 }
 
-// Run once on load
 loadFootballData();
+setInterval(loadFootballData, 60000);
 </script>
-
-</body>
-</html>
