@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,10 +10,52 @@
 
 <body>
 
+<!-- NAVBAR -->
+
+<nav>
+  <h1>KickNation</h1>
+
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="news.html">News</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- BREAKING TICKER -->
+
+<div class="ticker">
+  <p>
+    BREAKING: Champions League drama tonight •
+    Premier League title race heating up •
+    Latest football updates live on KickNation ⚽
+  </p>
+</div>
+
+<!-- HERO -->
+
 <section class="hero">
   <h2>Live Football News 📰</h2>
-  <p>Live football updates, fixtures & competitions</p>
+  <p>Real-time football coverage, scores & updates</p>
 </section>
+
+<!-- FEATURED MATCH -->
+
+<section class="live-score">
+
+  <h2>🔥 Featured Match</h2>
+
+  <div class="score" id="featuredScore">
+    Loading Match...
+  </div>
+
+  <p id="featuredLeague">
+    Loading Competition...
+  </p>
+
+</section>
+
+<!-- NEWS CARDS -->
 
 <section class="features">
 
@@ -32,6 +75,8 @@
   </div>
 
 </section>
+
+<!-- SCRIPT -->
 
 <script>
 
@@ -57,12 +102,18 @@ async function loadFootballData() {
   const ucl = document.getElementById("ucl");
   const worldcup = document.getElementById("worldcup");
 
+  const featuredScore =
+    document.getElementById("featuredScore");
+
+  const featuredLeague =
+    document.getElementById("featuredLeague");
+
   try {
 
     const response = await fetch("/.netlify/functions/football");
 
     if (!response.ok) {
-      throw new Error("Backend not responding");
+      throw new Error("Backend error");
     }
 
     const data = await response.json();
@@ -71,8 +122,10 @@ async function loadFootballData() {
 
       const match = data.matches[0];
 
-      injury.innerText =
+      const matchText =
         match.homeTeam.name + " vs " + match.awayTeam.name;
+
+      injury.innerText = matchText;
 
       ucl.innerText =
         match.competition.name;
@@ -81,37 +134,67 @@ async function loadFootballData() {
         "Kickoff: " +
         new Date(match.utcDate).toLocaleString();
 
+      featuredScore.innerText = matchText;
+
+      featuredLeague.innerText =
+        match.competition.name;
+
     } else {
 
-      injury.innerText =
+      const randomMatch =
         fallbackMatches[Math.floor(Math.random() * fallbackMatches.length)];
 
-      ucl.innerText =
+      const randomCompetition =
         fallbackCompetitions[Math.floor(Math.random() * fallbackCompetitions.length)];
+
+      injury.innerText = randomMatch;
+
+      ucl.innerText = randomCompetition;
 
       worldcup.innerText =
         "More football updates coming soon";
+
+      featuredScore.innerText = randomMatch;
+
+      featuredLeague.innerText =
+        randomCompetition;
     }
 
   } catch (error) {
 
-    injury.innerText =
+    const randomMatch =
       fallbackMatches[Math.floor(Math.random() * fallbackMatches.length)];
 
-    ucl.innerText =
+    const randomCompetition =
       fallbackCompetitions[Math.floor(Math.random() * fallbackCompetitions.length)];
+
+    injury.innerText = randomMatch;
+
+    ucl.innerText = randomCompetition;
 
     worldcup.innerText =
       "Live football system active";
+
+    featuredScore.innerText = randomMatch;
+
+    featuredLeague.innerText =
+      randomCompetition;
 
     console.log(error);
   }
 }
 
 loadFootballData();
+
 setInterval(loadFootballData, 10000);
 
 </script>
+
+<!-- FOOTER -->
+
+<footer>
+  <p>© 2026 KickNation • Football Never Stops ⚽</p>
+</footer>
 
 </body>
 </html>
