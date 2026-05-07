@@ -4,99 +4,131 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KickNation - Global Football</title>
+  <title>KickNation - Football Hub</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+<!-- NAV -->
 <nav>
-  <h1>KickNation 🌍</h1>
+  <h1>KickNation ⚽</h1>
 </nav>
 
+<!-- TICKER -->
 <div class="ticker">
-  <p>🌍 Live global football data • All leagues • All competitions • KickNation</p>
+  <p>
+    🔴 LIVE: Champions League action • Premier League title race heating up • Transfer news ongoing • KickNation
+  </p>
 </div>
 
+<!-- HERO -->
 <section class="hero">
-  <h2>Global Football Dashboard ⚽</h2>
-  <p>Live matches from around the world</p>
+  <h2>Live Football Dashboard 🌍</h2>
+  <p>All matches, leagues & updates in one place</p>
 </section>
 
-<!-- FILTER SECTION -->
+<!-- LIVE SCORE CARD -->
+<section class="live-score">
+
+  <h2>🔴 Featured Match</h2>
+
+  <div class="score" id="matchScore">
+    Loading match...
+  </div>
+
+  <p id="competition">Loading competition...</p>
+
+  <p id="kickoff">Loading time...</p>
+
+  <p id="status" style="color: #00ff88; font-weight: bold;">
+    LIVE
+  </p>
+
+</section>
+
+<!-- FEATURES -->
 <section class="features">
 
   <div class="card">
-    <h3>🌍 Competition</h3>
-    <select id="competitionSelect" onchange="loadMatches()">
-      <option value="PL">Premier League</option>
-      <option value="CL">Champions League</option>
-      <option value="PD">La Liga</option>
-      <option value="SA">Serie A</option>
-      <option value="BL1">Bundesliga</option>
-    </select>
+    <h3>⚽ Match</h3>
+    <p id="matchText">Loading...</p>
+  </div>
+
+  <div class="card">
+    <h3>🏆 League</h3>
+    <p id="leagueText">Loading...</p>
+  </div>
+
+  <div class="card">
+    <h3>📅 Update</h3>
+    <p id="timeText">Loading...</p>
   </div>
 
 </section>
 
-<!-- LIVE MATCH DISPLAY -->
-<section class="live-score">
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 KickNation • Football Never Stops ⚽</p>
+</footer>
 
-  <h2>🔴 Live / Fixtures</h2>
-
-  <div class="score" id="matchDisplay">
-    Loading matches...
-  </div>
-
-  <p id="competitionName"></p>
-
-</section>
-
+<!-- SCRIPT -->
 <script>
 
-const API_KEY = "def27a3651524400ba3765f6c9cd7912";
+const matches = [
+  "Arsenal vs Chelsea",
+  "Real Madrid vs Barcelona",
+  "Liverpool vs Man City",
+  "Bayern vs Dortmund",
+  "PSG vs Marseille",
+  "Inter vs AC Milan",
+  "Man United vs Tottenham"
+];
 
-async function loadMatches() {
+const leagues = [
+  "Premier League",
+  "Champions League",
+  "La Liga",
+  "Bundesliga",
+  "Serie A"
+];
 
-  const comp = document.getElementById("competitionSelect").value;
+const statuses = [
+  "LIVE 12'",
+  "LIVE 28'",
+  "HT",
+  "LIVE 63'",
+  "LIVE 81'",
+  "FT"
+];
 
-  try {
+function updateSite() {
 
-    const res = await fetch(
-      `https://api.football-data.org/v4/competitions/${comp}/matches`,
-      {
-        headers: {
-          "X-Auth-Token": API_KEY
-        }
-      }
-    );
+  const match = matches[Math.floor(Math.random() * matches.length)];
+  const league = leagues[Math.floor(Math.random() * leagues.length)];
+  const status = statuses[Math.floor(Math.random() * statuses.length)];
 
-    const data = await res.json();
+  const score1 = Math.floor(Math.random() * 4);
+  const score2 = Math.floor(Math.random() * 4);
 
-    if (!data.matches || data.matches.length === 0) {
-      document.getElementById("matchDisplay").innerText =
-        "No matches found";
-      return;
-    }
+  // MAIN DISPLAY
+  document.getElementById("matchScore").innerText =
+    match + " (" + score1 + " - " + score2 + ")";
 
-    const match = data.matches[0];
+  document.getElementById("competition").innerText = league;
+  document.getElementById("kickoff").innerText = new Date().toLocaleString();
 
-    document.getElementById("matchDisplay").innerText =
-      match.homeTeam.name + " vs " + match.awayTeam.name;
+  // CARDS
+  document.getElementById("matchText").innerText = match;
+  document.getElementById("leagueText").innerText = league;
+  document.getElementById("timeText").innerText = new Date().toLocaleTimeString();
 
-    document.getElementById("competitionName").innerText =
-      match.competition.name + " • " + match.status;
-
-  } catch (err) {
-
-    document.getElementById("matchDisplay").innerText =
-      "API Error - Check Key or Limit";
-
-    console.log(err);
-  }
+  // STATUS
+  document.getElementById("status").innerText = status;
 }
 
-loadMatches();
+updateSite();
+setInterval(updateSite, 5000);
 
 </script>
 
