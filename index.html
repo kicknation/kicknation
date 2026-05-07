@@ -33,7 +33,7 @@
   <h2>🔴 Featured Match</h2>
 
   <div class="score" id="matchScore">
-    Loading match...
+    Loading live data...
   </div>
 
   <p id="competition">Loading league...</p>
@@ -84,50 +84,53 @@
 <!-- SCRIPT -->
 <script>
 
-const matches = [
-  "Arsenal vs Chelsea",
-  "Real Madrid vs Barcelona",
-  "Liverpool vs Man City",
-  "Bayern vs Dortmund",
-  "PSG vs Marseille",
-  "Inter vs AC Milan",
-  "Tottenham vs Newcastle"
-];
+const API_URL = "https://your-project.vercel.app/api/matches";
 
-const leagues = [
-  "Premier League",
-  "Champions League",
-  "La Liga",
-  "Bundesliga",
-  "Serie A"
-];
+async function loadMatches() {
+  try {
 
-const statuses = ["LIVE 12'", "LIVE 34'", "HT", "LIVE 67'", "LIVE 81'", "FT"];
+    const res = await fetch(API_URL);
+    const data = await res.json();
 
-function updateSite() {
+    const match = data.matches?.[0];
 
-  const match = matches[Math.floor(Math.random() * matches.length)];
-  const league = leagues[Math.floor(Math.random() * leagues.length)];
-  const status = statuses[Math.floor(Math.random() * statuses.length)];
+    if (!match) {
+      document.getElementById("matchScore").innerText = "No live matches right now";
+      return;
+    }
 
-  const s1 = Math.floor(Math.random() * 4);
-  const s2 = Math.floor(Math.random() * 4);
+    document.getElementById("matchScore").innerText =
+      `${match.homeTeam.name} vs ${match.awayTeam.name}`;
 
-  document.getElementById("matchScore").innerText =
-    match + "  " + s1 + " - " + s2;
+    document.getElementById("competition").innerText =
+      match.competition.name;
 
-  document.getElementById("competition").innerText = league;
-  document.getElementById("kickoff").innerText = new Date().toLocaleString();
-  document.getElementById("status").innerText = status;
+    document.getElementById("kickoff").innerText =
+      new Date(match.utcDate).toLocaleString();
 
-  document.getElementById("matchText").innerText = match;
-  document.getElementById("leagueText").innerText = league;
-  document.getElementById("timeText").innerText = new Date().toLocaleTimeString();
+    document.getElementById("status").innerText =
+      match.status;
+
+    document.getElementById("matchText").innerText =
+      `${match.homeTeam.name} vs ${match.awayTeam.name}`;
+
+    document.getElementById("leagueText").innerText =
+      match.competition.name;
+
+    document.getElementById("timeText").innerText =
+      new Date().toLocaleTimeString();
+
+  } catch (err) {
+    console.log(err);
+    document.getElementById("matchScore").innerText =
+      "Live data unavailable";
+  }
 }
 
-updateSite();
-setInterval(updateSite, 5000);
+loadMatches();
+setInterval(loadMatches, 60000);
 
+/* SEARCH SYSTEM */
 function searchTeam() {
 
   const input = document.getElementById("teamInput").value.toLowerCase();
