@@ -32,37 +32,44 @@
 </section>
 
 <script>
-const injuryUpdates = [
-  "Erling Haaland expected to return next match",
-  "Mbappé suffers minor knock but available",
-  "Vinícius Jr cleared for Champions League game"
-];
+const API_KEY = "def27a3651524400ba3765f6c9cd7912";
 
-const uclUpdates = [
-  "Real Madrid advance to semifinals",
-  "Man City dominate group stage",
-  "Bayern Munich qualify comfortably"
-];
+async function loadFootballData() {
+  try {
+    const res = await fetch("https://api.football-data.org/v4/matches", {
+      method: "GET",
+      headers: {
+        "X-Auth-Token": API_KEY
+      }
+    });
 
-const worldCupUpdates = [
-  "Brazil lead South American standings",
-  "England secure early qualification spot",
-  "Qualifiers heating up in Europe"
-];
+    const data = await res.json();
 
-function updateNews() {
-  document.getElementById("injury").innerText =
-    injuryUpdates[Math.floor(Math.random() * injuryUpdates.length)];
+    if (!data.matches || data.matches.length === 0) {
+      document.getElementById("ucl").innerText = "No live matches right now";
+      return;
+    }
 
-  document.getElementById("ucl").innerText =
-    uclUpdates[Math.floor(Math.random() * uclUpdates.length)];
+    const match = data.matches[0];
 
-  document.getElementById("worldcup").innerText =
-    worldCupUpdates[Math.floor(Math.random() * worldCupUpdates.length)];
+    document.getElementById("injury").innerText =
+      match.homeTeam.name + " vs " + match.awayTeam.name;
+
+    document.getElementById("ucl").innerText =
+      "Competition: " + match.competition.name;
+
+    document.getElementById("worldcup").innerText =
+      "Status: " + match.status;
+
+  } catch (error) {
+    document.getElementById("ucl").innerText =
+      "Error loading data";
+    console.log(error);
+  }
 }
 
-updateNews();
-setInterval(updateNews, 5000);
+loadFootballData();
+setInterval(loadFootballData, 60000);
 </script>
 
 </body>
