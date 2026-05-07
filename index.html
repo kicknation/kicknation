@@ -1,54 +1,184 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
-  <title>KickNation FC</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KickNation - Live Football Hub</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-  <!-- NAVBAR -->
-  <header class="navbar">
-    <h1 class="logo">KickNation FC</h1>
-    <nav>
-      <a href="index.html">Home</a>
-      <a href="shop.html">Shop</a>
-      <a href="news.html">News</a>
-      <a href="contact.html">Contact</a>
-    </nav>
-  </header>
+<!-- NAVBAR -->
+<nav>
+  <h1>KickNation</h1>
 
-  <!-- HERO SECTION -->
-  <section class="hero">
-    <h2>Built for the Future of Football ⚽</h2>
-    <p>Train harder. Play smarter. Represent KickNation.</p>
-    <a href="shop.html" class="btn">Shop Now</a>
-  </section>
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="news.html">News</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
 
-  <!-- FEATURES -->
-  <section class="features">
-    <div class="card">
-      <h3>🔥 Training Gear</h3>
-      <p>Elite football equipment for performance.</p>
-    </div>
+<!-- BREAKING TICKER -->
+<div class="ticker">
+  <p>
+    🔴 BREAKING: Champions League night fixtures •
+    Premier League title race heating up •
+    Transfer window rumors increasing •
+    KickNation Live Updates ⚽
+  </p>
+</div>
 
-    <div class="card">
-      <h3>⚽ Kits</h3>
-      <p>Official KickNation jerseys & merch.</p>
-    </div>
+<!-- HERO DASHBOARD -->
+<section class="hero">
+  <h2>KickNation Live Dashboard ⚽</h2>
+  <p>Real-time football scores, news & updates</p>
+</section>
 
-    <div class="card">
-      <h3>📈 News</h3>
-      <p>Stay updated with football insights.</p>
-    </div>
-  </section>
+<!-- LIVE MATCH CENTER -->
+<section class="live-score">
 
-  <!-- FOOTER -->
-  <footer>
-    <p>© 2026 KickNation FC. All rights reserved.</p>
-  </footer>
+  <h2>🔥 Featured Live Match</h2>
+
+  <div class="score" id="matchScore">
+    Loading match...
+  </div>
+
+  <p id="matchInfo">Loading competition...</p>
+
+</section>
+
+<!-- QUICK STATS -->
+<section class="features">
+
+  <div class="card">
+    <h3>⚽ Latest Match</h3>
+    <p id="latestMatch">Loading...</p>
+  </div>
+
+  <div class="card">
+    <h3>🏆 Competition</h3>
+    <p id="competition">Loading...</p>
+  </div>
+
+  <div class="card">
+    <h3>📅 Kickoff</h3>
+    <p id="kickoff">Loading...</p>
+  </div>
+
+</section>
+
+<!-- TOURNAMENT CARDS -->
+<section class="features">
+
+  <div class="card">
+    <h3>🏆 Champions League</h3>
+    <p>Europe’s biggest competition</p>
+  </div>
+
+  <div class="card">
+    <h3>🇬🇧 Premier League</h3>
+    <p>England top division</p>
+  </div>
+
+  <div class="card">
+    <h3>🌍 World Cup</h3>
+    <p>International football stage</p>
+  </div>
+
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2026 KickNation • Football Never Stops ⚽</p>
+</footer>
+
+<!-- SCRIPT -->
+<script>
+
+const fallbackMatches = [
+  "Arsenal vs Chelsea",
+  "Real Madrid vs Barcelona",
+  "Liverpool vs Man City",
+  "Bayern vs Dortmund"
+];
+
+const fallbackCompetitions = [
+  "Premier League",
+  "Champions League",
+  "La Liga",
+  "Bundesliga"
+];
+
+async function loadHomeData() {
+
+  const matchScore = document.getElementById("matchScore");
+  const matchInfo = document.getElementById("matchInfo");
+  const latestMatch = document.getElementById("latestMatch");
+  const competition = document.getElementById("competition");
+  const kickoff = document.getElementById("kickoff");
+
+  try {
+
+    const res = await fetch("/.netlify/functions/football");
+    const data = await res.json();
+
+    if (data.matches && data.matches.length > 0) {
+
+      const match = data.matches[0];
+
+      const matchText =
+        match.homeTeam.name + " vs " + match.awayTeam.name;
+
+      matchScore.innerText = matchText;
+      latestMatch.innerText = matchText;
+
+      competition.innerText = match.competition.name;
+      matchInfo.innerText = match.competition.name;
+
+      kickoff.innerText =
+        new Date(match.utcDate).toLocaleString();
+
+    } else {
+
+      const randomMatch =
+        fallbackMatches[Math.floor(Math.random() * fallbackMatches.length)];
+
+      const randomComp =
+        fallbackCompetitions[Math.floor(Math.random() * fallbackCompetitions.length)];
+
+      matchScore.innerText = randomMatch;
+      latestMatch.innerText = randomMatch;
+
+      competition.innerText = randomComp;
+      matchInfo.innerText = randomComp;
+
+      kickoff.innerText = "Coming soon";
+    }
+
+  } catch (err) {
+
+    const randomMatch =
+      fallbackMatches[Math.floor(Math.random() * fallbackMatches.length)];
+
+    matchScore.innerText = randomMatch;
+    latestMatch.innerText = randomMatch;
+
+    competition.innerText = "Football Hub";
+    matchInfo.innerText = "Live updates unavailable";
+
+    kickoff.innerText = "Try again later";
+
+    console.log(err);
+  }
+}
+
+loadHomeData();
+setInterval(loadHomeData, 15000);
+
+</script>
 
 </body>
 </html>
-
