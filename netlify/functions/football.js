@@ -1,10 +1,13 @@
 exports.handler = async function () {
   try {
-    const response = await fetch("https://api.football-data.org/v4/matches", {
-      headers: {
-        "X-Auth-Token": process.env.FOOTBALL_API_KEY
+    const response = await fetch(
+      "https://api.football-data.org/v4/matches?status=SCHEDULED",
+      {
+        headers: {
+          "X-Auth-Token": process.env.FOOTBALL_API_KEY
+        }
       }
-    });
+    );
 
     const data = await response.json();
 
@@ -16,7 +19,9 @@ exports.handler = async function () {
   } catch (error) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "Server error" })
+      body: JSON.stringify({
+        error: "Server error"
+      })
     };
   }
 };
