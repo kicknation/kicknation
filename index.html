@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KickNation - Live Football Hub</title>
+  <title>KickNation - Football Hub</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
@@ -21,71 +21,57 @@
   </ul>
 </nav>
 
-<!-- BREAKING TICKER -->
+<!-- TICKER -->
 <div class="ticker">
   <p>
     🔴 BREAKING: Champions League night fixtures •
     Premier League title race heating up •
-    Transfer window rumors increasing •
-    KickNation Live Updates ⚽
+    Transfer rumours ongoing •
+    KickNation Live ⚽
   </p>
 </div>
 
-<!-- HERO DASHBOARD -->
+<!-- HERO -->
 <section class="hero">
-  <h2>KickNation Live Dashboard ⚽</h2>
-  <p>Real-time football scores, news & updates</p>
+  <h2>KickNation Football Hub ⚽</h2>
+  <p>Live matches, updates & football news</p>
 </section>
 
-<!-- LIVE MATCH CENTER -->
+<!-- LIVE MATCH -->
 <section class="live-score">
 
-  <h2>🔥 Featured Live Match</h2>
+  <h2>🔥 Featured Match</h2>
 
   <div class="score" id="matchScore">
     Loading match...
   </div>
 
-  <p id="matchInfo">Loading competition...</p>
+  <p id="competition">
+    Loading competition...
+  </p>
+
+  <p id="kickoff">
+    Loading time...
+  </p>
 
 </section>
 
-<!-- QUICK STATS -->
+<!-- FEATURE CARDS -->
 <section class="features">
 
   <div class="card">
-    <h3>⚽ Latest Match</h3>
-    <p id="latestMatch">Loading...</p>
+    <h3>⚽ Match</h3>
+    <p id="matchText">Loading...</p>
   </div>
 
   <div class="card">
-    <h3>🏆 Competition</h3>
-    <p id="competition">Loading...</p>
+    <h3>🏆 League</h3>
+    <p id="leagueText">Loading...</p>
   </div>
 
   <div class="card">
-    <h3>📅 Kickoff</h3>
-    <p id="kickoff">Loading...</p>
-  </div>
-
-</section>
-
-<!-- TOURNAMENT CARDS -->
-<section class="features">
-
-  <div class="card">
-    <h3>🏆 Champions League</h3>
-    <p>Europe’s biggest competition</p>
-  </div>
-
-  <div class="card">
-    <h3>🇬🇧 Premier League</h3>
-    <p>England top division</p>
-  </div>
-
-  <div class="card">
-    <h3>🌍 World Cup</h3>
-    <p>International football stage</p>
+    <h3>📅 Updates</h3>
+    <p>Auto-updating football feed</p>
   </div>
 
 </section>
@@ -98,85 +84,44 @@
 <!-- SCRIPT -->
 <script>
 
-const fallbackMatches = [
+const matches = [
   "Arsenal vs Chelsea",
   "Real Madrid vs Barcelona",
   "Liverpool vs Man City",
-  "Bayern vs Dortmund"
+  "Bayern vs Dortmund",
+  "PSG vs Marseille"
 ];
 
-const fallbackCompetitions = [
+const leagues = [
   "Premier League",
   "Champions League",
   "La Liga",
-  "Bundesliga"
+  "Bundesliga",
+  "Serie A"
 ];
 
-async function loadHomeData() {
+function updateSite() {
+
+  const match = matches[Math.floor(Math.random() * matches.length)];
+  const league = leagues[Math.floor(Math.random() * leagues.length)];
 
   const matchScore = document.getElementById("matchScore");
-  const matchInfo = document.getElementById("matchInfo");
-  const latestMatch = document.getElementById("latestMatch");
   const competition = document.getElementById("competition");
   const kickoff = document.getElementById("kickoff");
+  const matchText = document.getElementById("matchText");
+  const leagueText = document.getElementById("leagueText");
 
-  try {
+  if (matchScore) matchScore.innerText = match;
+  if (matchText) matchText.innerText = match;
 
-    const res = await fetch("/.netlify/functions/football");
-    const data = await res.json();
+  if (competition) competition.innerText = league;
+  if (leagueText) leagueText.innerText = league;
 
-    if (data.matches && data.matches.length > 0) {
-
-      const match = data.matches[0];
-
-      const matchText =
-        match.homeTeam.name + " vs " + match.awayTeam.name;
-
-      matchScore.innerText = matchText;
-      latestMatch.innerText = matchText;
-
-      competition.innerText = match.competition.name;
-      matchInfo.innerText = match.competition.name;
-
-      kickoff.innerText =
-        new Date(match.utcDate).toLocaleString();
-
-    } else {
-
-      const randomMatch =
-        fallbackMatches[Math.floor(Math.random() * fallbackMatches.length)];
-
-      const randomComp =
-        fallbackCompetitions[Math.floor(Math.random() * fallbackCompetitions.length)];
-
-      matchScore.innerText = randomMatch;
-      latestMatch.innerText = randomMatch;
-
-      competition.innerText = randomComp;
-      matchInfo.innerText = randomComp;
-
-      kickoff.innerText = "Coming soon";
-    }
-
-  } catch (err) {
-
-    const randomMatch =
-      fallbackMatches[Math.floor(Math.random() * fallbackMatches.length)];
-
-    matchScore.innerText = randomMatch;
-    latestMatch.innerText = randomMatch;
-
-    competition.innerText = "Football Hub";
-    matchInfo.innerText = "Live updates unavailable";
-
-    kickoff.innerText = "Try again later";
-
-    console.log(err);
-  }
+  if (kickoff) kickoff.innerText = new Date().toLocaleString();
 }
 
-loadHomeData();
-setInterval(loadHomeData, 15000);
+updateSite();
+setInterval(updateSite, 6000);
 
 </script>
 
