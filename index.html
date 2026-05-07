@@ -4,59 +4,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KickNation - Global Football Hub</title>
+  <title>KickNation Pro - Global Football App</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- TOP BAR -->
 <header class="topbar">
-  <h1>KickNation ⚽</h1>
-  <p>Live Football Dashboard</p>
+  <h1>KickNation PRO ⚽</h1>
+  <p>Live Global Football Intelligence</p>
 </header>
 
-<!-- TICKER -->
 <div class="ticker">
-  <p>🔴 LIVE: Champions League • Premier League • La Liga • World Football Updates</p>
+  <p>🔴 LIVE DATA • REAL MATCHES • GLOBAL TEAMS • REAL-TIME UPDATES</p>
 </div>
 
-<!-- HERO -->
 <section class="hero">
-  <h2>🌍 Global Football Hub</h2>
-  <p>Search teams, view matches & explore football worldwide</p>
+  <h2>🌍 Professional Football Dashboard</h2>
+  <p>Live matches, global teams, and real-time stats</p>
 </section>
 
 <!-- LIVE MATCH -->
 <section class="live-score">
 
-  <h2>🔴 Featured Match</h2>
+  <h2>🔴 Featured Live Match</h2>
 
-  <div class="score" id="matchScore">
-    Loading live data...
-  </div>
+  <div class="score" id="matchScore">Loading live data...</div>
 
   <p id="competition">Loading league...</p>
   <p id="kickoff">Loading time...</p>
-  <p id="status" style="color:#00ff88;font-weight:bold;">LIVE</p>
+  <p id="status">Checking status...</p>
 
 </section>
 
-<!-- SEARCH SECTION -->
+<!-- SEARCH -->
 <section class="search-section">
 
-  <h2>🔍 Search Any Football Team</h2>
+  <h2>🔍 Global Team Search</h2>
 
-  <input type="text" id="teamInput" placeholder="Enter team name...">
+  <input type="text" id="teamInput" placeholder="Search any football team worldwide...">
   <button onclick="searchTeam()">Search</button>
 
   <div class="search-result" id="searchResult">
-    Type a team name above 👆
+    Enter a team name to begin search
   </div>
 
 </section>
 
-<!-- FEATURE CARDS -->
+<!-- CARDS -->
 <section class="features">
 
   <div class="card">
@@ -76,52 +71,69 @@
 
 </section>
 
-<!-- FOOTER -->
 <footer>
-  <p>© 2026 KickNation • Football Never Stops ⚽</p>
+  <p>© 2026 KickNation PRO • Powered by Live Football APIs ⚽</p>
 </footer>
 
-<!-- SCRIPT -->
 <script>
 
-const API_URL = "https://your-project.vercel.app/api/matches";
+const API_URL = "https://kicknation.vercel.app/api/matches";
 
+/* =========================
+   PRO LIVE MATCH ENGINE
+========================= */
 async function loadMatches() {
   try {
 
     const res = await fetch(API_URL);
+    if (!res.ok) throw new Error("API failed");
+
     const data = await res.json();
+    const matches = data?.matches || [];
 
-    const match = data.matches?.[0];
-
-    if (!match) {
-      document.getElementById("matchScore").innerText = "No live matches right now";
+    if (matches.length === 0) {
+      document.getElementById("matchScore").innerText = "No matches available";
       return;
     }
 
-    document.getElementById("matchScore").innerText =
-      `${match.homeTeam.name} vs ${match.awayTeam.name}`;
+    /* PRIORITY SYSTEM (PRO LOGIC) */
+    const match =
+      matches.find(m => m.status === "IN_PLAY") ||
+      matches.find(m => m.status === "TIMED") ||
+      matches[0];
+
+    const home = match?.homeTeam?.name || "Home";
+    const away = match?.awayTeam?.name || "Away";
+
+    document.getElementById("matchScore").innerText = `${home} vs ${away}`;
 
     document.getElementById("competition").innerText =
-      match.competition.name;
+      match?.competition?.name || "Unknown League";
 
     document.getElementById("kickoff").innerText =
-      new Date(match.utcDate).toLocaleString();
+      match?.utcDate ? new Date(match.utcDate).toLocaleString() : "N/A";
+
+    /* PRO STATUS SYSTEM */
+    let status = match?.status || "UNKNOWN";
+
+    const statusMap = {
+      IN_PLAY: "🔴 LIVE",
+      TIMED: "⏳ UPCOMING",
+      FINISHED: "✅ FULL TIME"
+    };
 
     document.getElementById("status").innerText =
-      match.status;
+      statusMap[status] || status;
 
-    document.getElementById("matchText").innerText =
-      `${match.homeTeam.name} vs ${match.awayTeam.name}`;
-
+    document.getElementById("matchText").innerText = `${home} vs ${away}`;
     document.getElementById("leagueText").innerText =
-      match.competition.name;
+      match?.competition?.name || "Unknown";
 
     document.getElementById("timeText").innerText =
       new Date().toLocaleTimeString();
 
   } catch (err) {
-    console.log(err);
+    console.log("API ERROR:", err);
     document.getElementById("matchScore").innerText =
       "Live data unavailable";
   }
@@ -130,10 +142,12 @@ async function loadMatches() {
 loadMatches();
 setInterval(loadMatches, 60000);
 
-/* SEARCH SYSTEM */
+/* =========================
+   PRO GLOBAL SEARCH ENGINE
+========================= */
 function searchTeam() {
 
-  const input = document.getElementById("teamInput").value.toLowerCase();
+  const input = document.getElementById("teamInput").value.toLowerCase().trim();
   const result = document.getElementById("searchResult");
 
   if (!input) {
@@ -141,28 +155,42 @@ function searchTeam() {
     return;
   }
 
-  const teams = [
-    { name: "arsenal", league: "Premier League" },
-    { name: "chelsea", league: "Premier League" },
-    { name: "manchester united", league: "Premier League" },
-    { name: "liverpool", league: "Premier League" },
-    { name: "real madrid", league: "La Liga" },
-    { name: "barcelona", league: "La Liga" },
-    { name: "bayern munich", league: "Bundesliga" },
-    { name: "psg", league: "Ligue 1" },
-    { name: "juventus", league: "Serie A" }
-  ];
+  /* EXPANDABLE GLOBAL SEARCH MAP */
+  const teamMap = {
+    "arsenal": "Premier League",
+    "chelsea": "Premier League",
+    "manchester united": "Premier League",
+    "man united": "Premier League",
+    "liverpool": "Premier League",
+    "real madrid": "La Liga",
+    "barcelona": "La Liga",
+    "bayern": "Bundesliga",
+    "bayern munich": "Bundesliga",
+    "psg": "Ligue 1",
+    "paris": "Ligue 1",
+    "juventus": "Serie A",
+    "inter": "Serie A",
+    "milan": "Serie A"
+  };
 
-  const found = teams.find(t => input.includes(t.name));
+  let foundLeague = null;
 
-  if (found) {
-    result.innerHTML =
-      "✅ Team: " + found.name.toUpperCase() +
-      "<br>🏆 League: " + found.league +
-      "<br>⚽ Status: Active squad available";
+  for (let team in teamMap) {
+    if (input.includes(team)) {
+      foundLeague = teamMap[team];
+      break;
+    }
+  }
+
+  if (foundLeague) {
+    result.innerHTML = `
+      ✅ Team Found<br>
+      🏆 League: ${foundLeague}<br>
+      ⚽ Data: Available (API integration ready)
+    `;
   } else {
     result.innerHTML =
-      "❌ Team not found in database.<br>More global teams coming soon.";
+      "🌍 Team not found in local database.<br>Upgrade coming: full global club database.";
   }
 }
 
