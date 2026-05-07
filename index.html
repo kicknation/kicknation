@@ -4,31 +4,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KickNation - Football Hub</title>
+  <title>KickNation - Global Football Hub</title>
   <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<!-- NAV -->
-<nav>
+<!-- TOP BAR -->
+<header class="topbar">
   <h1>KickNation ⚽</h1>
-</nav>
+  <p>Live Football Dashboard</p>
+</header>
 
 <!-- TICKER -->
 <div class="ticker">
-  <p>
-    🔴 LIVE: Champions League action • Premier League title race heating up • Transfer news ongoing • KickNation
-  </p>
+  <p>🔴 LIVE: Champions League • Premier League • La Liga • World Football Updates</p>
 </div>
 
 <!-- HERO -->
 <section class="hero">
-  <h2>Live Football Dashboard 🌍</h2>
-  <p>All matches, leagues & updates in one place</p>
+  <h2>🌍 Global Football Hub</h2>
+  <p>Search teams, view matches & explore football worldwide</p>
 </section>
 
-<!-- LIVE SCORE CARD -->
+<!-- LIVE MATCH -->
 <section class="live-score">
 
   <h2>🔴 Featured Match</h2>
@@ -37,17 +36,27 @@
     Loading match...
   </div>
 
-  <p id="competition">Loading competition...</p>
-
+  <p id="competition">Loading league...</p>
   <p id="kickoff">Loading time...</p>
-
-  <p id="status" style="color: #00ff88; font-weight: bold;">
-    LIVE
-  </p>
+  <p id="status" style="color:#00ff88;font-weight:bold;">LIVE</p>
 
 </section>
 
-<!-- FEATURES -->
+<!-- SEARCH SECTION -->
+<section class="search-section">
+
+  <h2>🔍 Search Any Football Team</h2>
+
+  <input type="text" id="teamInput" placeholder="Enter team name...">
+  <button onclick="searchTeam()">Search</button>
+
+  <div class="search-result" id="searchResult">
+    Type a team name above 👆
+  </div>
+
+</section>
+
+<!-- FEATURE CARDS -->
 <section class="features">
 
   <div class="card">
@@ -61,7 +70,7 @@
   </div>
 
   <div class="card">
-    <h3>📅 Update</h3>
+    <h3>⏱ Update</h3>
     <p id="timeText">Loading...</p>
   </div>
 
@@ -82,7 +91,7 @@ const matches = [
   "Bayern vs Dortmund",
   "PSG vs Marseille",
   "Inter vs AC Milan",
-  "Man United vs Tottenham"
+  "Tottenham vs Newcastle"
 ];
 
 const leagues = [
@@ -93,14 +102,7 @@ const leagues = [
   "Serie A"
 ];
 
-const statuses = [
-  "LIVE 12'",
-  "LIVE 28'",
-  "HT",
-  "LIVE 63'",
-  "LIVE 81'",
-  "FT"
-];
+const statuses = ["LIVE 12'", "LIVE 34'", "HT", "LIVE 67'", "LIVE 81'", "FT"];
 
 function updateSite() {
 
@@ -108,27 +110,58 @@ function updateSite() {
   const league = leagues[Math.floor(Math.random() * leagues.length)];
   const status = statuses[Math.floor(Math.random() * statuses.length)];
 
-  const score1 = Math.floor(Math.random() * 4);
-  const score2 = Math.floor(Math.random() * 4);
+  const s1 = Math.floor(Math.random() * 4);
+  const s2 = Math.floor(Math.random() * 4);
 
-  // MAIN DISPLAY
   document.getElementById("matchScore").innerText =
-    match + " (" + score1 + " - " + score2 + ")";
+    match + "  " + s1 + " - " + s2;
 
   document.getElementById("competition").innerText = league;
   document.getElementById("kickoff").innerText = new Date().toLocaleString();
+  document.getElementById("status").innerText = status;
 
-  // CARDS
   document.getElementById("matchText").innerText = match;
   document.getElementById("leagueText").innerText = league;
   document.getElementById("timeText").innerText = new Date().toLocaleTimeString();
-
-  // STATUS
-  document.getElementById("status").innerText = status;
 }
 
 updateSite();
 setInterval(updateSite, 5000);
+
+function searchTeam() {
+
+  const input = document.getElementById("teamInput").value.toLowerCase();
+  const result = document.getElementById("searchResult");
+
+  if (!input) {
+    result.innerText = "Please enter a team name.";
+    return;
+  }
+
+  const teams = [
+    { name: "arsenal", league: "Premier League" },
+    { name: "chelsea", league: "Premier League" },
+    { name: "manchester united", league: "Premier League" },
+    { name: "liverpool", league: "Premier League" },
+    { name: "real madrid", league: "La Liga" },
+    { name: "barcelona", league: "La Liga" },
+    { name: "bayern munich", league: "Bundesliga" },
+    { name: "psg", league: "Ligue 1" },
+    { name: "juventus", league: "Serie A" }
+  ];
+
+  const found = teams.find(t => input.includes(t.name));
+
+  if (found) {
+    result.innerHTML =
+      "✅ Team: " + found.name.toUpperCase() +
+      "<br>🏆 League: " + found.league +
+      "<br>⚽ Status: Active squad available";
+  } else {
+    result.innerHTML =
+      "❌ Team not found in database.<br>More global teams coming soon.";
+  }
+}
 
 </script>
 
